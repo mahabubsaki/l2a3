@@ -1,10 +1,10 @@
-export type TErrorSources = {
-    path: string | number;
-    message: string;
-}[];
+
 
 export type TGenericErrorResponse = {
     statusCode: number;
     message: string;
-    errorSources: TErrorSources;
+    errorDetails: any;
+    success: boolean;
+    stack: string | undefined;
+    errorMessage: string;
 };

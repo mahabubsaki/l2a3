@@ -1,4 +1,4 @@
-import { TErrorSources, TGenericErrorResponse } from '../interface/error';
+import { TGenericErrorResponse } from '../interface/error';
 
 const handleDuplicateError = (err: any): TGenericErrorResponse => {
 
@@ -6,7 +6,7 @@ const handleDuplicateError = (err: any): TGenericErrorResponse => {
 
     const extractedMessage = match && match[1];
 
-    const errorSources: TErrorSources = [
+    const errorSources = [
         {
             path: '',
             message: `${extractedMessage} is already exists`,
@@ -17,8 +17,11 @@ const handleDuplicateError = (err: any): TGenericErrorResponse => {
 
     return {
         statusCode,
-        message: 'Invalid ID',
-        errorSources,
+        message: 'Duplicate ID',
+        errorDetails: errorSources,
+        errorMessage: errorSources[0].message,
+        stack: err?.stack,
+        success: false
     };
 };
 
