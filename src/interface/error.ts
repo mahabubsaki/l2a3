@@ -8,3 +8,14 @@ export type TGenericErrorResponse = {
     stack: string | undefined;
     errorMessage: string;
 };
+
+export interface IQueryBuilder {
+    meta: {
+        page: number;
+        limit: number;
+    };
+    sort: {
+        [x: string]: number;
+    };
+    filter: any;
+}
