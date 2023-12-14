@@ -8,7 +8,7 @@ import reviewRouter from "../modules/review/review.route";
 const router = express.Router();
 
 const applicationRoutes = [
-    { path: '/courses', controller: courseRouter },
+    { path: '/', controller: courseRouter },
     { path: '/categories', controller: categoryRouter },
     { path: '/reviews', controller: reviewRouter },
 ];

@@ -7,10 +7,10 @@ import { courseBestGETController, coursePostController, courseWithReviewGETContr
 
 const courseRouter = express.Router();
 
-courseRouter.post('/', validateRequest(courseZodSchema), coursePostController);
-courseRouter.get('/', coursePostController);
-courseRouter.get('/best', courseBestGETController);
-courseRouter.get('/:courseId/reviews', courseWithReviewGETController);
+courseRouter.post('/course', validateRequest(courseZodSchema), coursePostController);
+courseRouter.get('/courses', coursePostController);
+courseRouter.get('/course/best', courseBestGETController);
+courseRouter.get('/courses/:courseId/reviews', courseWithReviewGETController);
 
 
 
