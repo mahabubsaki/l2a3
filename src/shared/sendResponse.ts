@@ -13,11 +13,15 @@ type TResponse<T> = {
 };
 
 const sendResponse = <T>(res: Response, data: TResponse<T>) => {
-    res.status(data?.statusCode).json({
+    res.status(data?.statusCode).json(data.meta ? {
         success: data.success,
         message: data.message,
         data: data.data,
-        meta: data?.meta ? data.meta : null
+        meta: data?.meta
+    } : {
+        success: data.success,
+        message: data.message,
+        data: data.data,
     });
 };
 

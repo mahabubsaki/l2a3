@@ -1,4 +1,4 @@
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 import { z } from "zod";
 import Category from "../category/category.model";
 
