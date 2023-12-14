@@ -27,7 +27,7 @@ const globalErrorHandler: ErrorRequestHandler = (err, _, res, __) => {
         error = { ...simplifiedError };
 
     } else if (err?.name === 'CastError' || (err?.errors && Object.entries((err as Error.ValidationError)?.errors)?.[0]?.[1]?.name === 'CastError')) {
-        const simplifiedError = handleCastError(err);
+        const simplifiedError = handleCastError(err, true);
         error = { ...simplifiedError };
     } else if (err?.name === 'ValidationError') {
         const simplifiedError = handleValidationError(err);

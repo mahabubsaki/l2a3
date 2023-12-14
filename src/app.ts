@@ -3,7 +3,6 @@ import express, { Application, Request, Response } from 'express';
 import router from './routes';
 import globalErrorHandler from './middlewares/globalErrorHandler';
 import notFound from './middlewares/notFound';
-import Course from './modules/course/course.model';
 
 
 const app: Application = express();

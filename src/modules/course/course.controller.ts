@@ -8,6 +8,7 @@ import pick from "../../utilities/pick";
 import queryBuilder from "../../utilities/queryBuilder";
 import { IQueryBuilder } from "../../interface/error";
 import { IReview } from "../review/review.interface";
+import mongoose from "mongoose";
 
 
 export const coursePostController = catchAsync(async (req: Request, res: Response) => {
@@ -38,6 +39,10 @@ export const courseGETController = catchAsync(async (req: Request, res: Response
 export const courseWithReviewGETController = catchAsync(async (req: Request, res: Response) => {
 
     const id = req.params.courseId;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        const err = new mongoose.Error.CastError('ObjectId', id, 'field_name');
+        throw { errors: err, name: 'CastError' };
+    }
 
     const result = await courseWithReviewGet(id);
     sendResponse<{
