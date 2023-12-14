@@ -7,6 +7,7 @@ import handleDuplicateError from '../errors/handleDuplicateError';
 import handleValidationError from '../errors/handleValidationError';
 import handleZodError from '../errors/handleZodError';
 import { TGenericErrorResponse } from '../interface/error';
+import { Error } from 'mongoose';
 
 
 const globalErrorHandler: ErrorRequestHandler = (err, _, res, __) => {
@@ -20,15 +21,16 @@ const globalErrorHandler: ErrorRequestHandler = (err, _, res, __) => {
         success: false
     };
 
+
     if (err?.name === 'ZodError') {
         const simplifiedError = handleZodError(err);
         error = { ...simplifiedError };
 
+    } else if (err?.name === 'CastError' || (err?.errors && Object.entries((err as Error.ValidationError)?.errors)?.[0]?.[1]?.name === 'CastError')) {
+        const simplifiedError = handleCastError(err);
+        error = { ...simplifiedError };
     } else if (err?.name === 'ValidationError') {
         const simplifiedError = handleValidationError(err);
-        error = { ...simplifiedError };
-    } else if (err?.name === 'CastError') {
-        const simplifiedError = handleCastError(err);
         error = { ...simplifiedError };
     } else if (err?.code === 11000) {
         const simplifiedError = handleDuplicateError(err);

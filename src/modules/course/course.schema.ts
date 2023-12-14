@@ -1,5 +1,6 @@
 import mongoose, { Types } from "mongoose";
 import { z } from "zod";
+import Category from "../category/category.model";
 
 const courseMongooseSchema = new mongoose.Schema({
     title: {
@@ -15,6 +16,27 @@ const courseMongooseSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true,
+
+        validate: {
+            validator: async function (value: mongoose.Schema.Types.ObjectId) {
+                try {
+                    const category = await Category.findById(value);
+                    if (!category) {
+                        const error = new mongoose.Error.CastError(
+                            'categoryId',
+                            value,
+                            'Category not found'
+                        );
+                        throw error;
+                    }
+                    return true;
+                } catch (err) {
+                    throw err;
+                }
+            },
+
+        }
+
     },
     price: {
         type: Number,
@@ -67,10 +89,7 @@ const courseMongooseSchema = new mongoose.Schema({
 const courseZodSchema = z.object({
     title: z.string(),
     instructor: z.string(),
-    categoryId: z.string().refine(value => {
-        console.log(Types.ObjectId.isValid(value));
-        return Types.ObjectId.isValid(value);
-    }, { message: "Invalid ID" }),
+    categoryId: z.string(),
     price: z.number(),
     tags: z.array(z.object({
         name: z.string(),
