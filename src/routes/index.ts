@@ -1,14 +1,16 @@
 import express from "express";
 import courseRouter from "../modules/course/course.route";
 import categoryRouter from "../modules/category/category.route";
+import reviewRouter from "../modules/review/review.route";
 
 
 
 const router = express.Router();
 
 const applicationRoutes = [
-    { path: '/course', controller: courseRouter },
+    { path: '/courses', controller: courseRouter },
     { path: '/categories', controller: categoryRouter },
+    { path: '/reviews', controller: reviewRouter },
 ];
 
 applicationRoutes.forEach(route => {

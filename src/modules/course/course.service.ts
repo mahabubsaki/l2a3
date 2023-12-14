@@ -1,8 +1,10 @@
 
+import mongoose from "mongoose";
 import { IQueryBuilder } from "../../interface/error";
 import dateToWeek from "../../utilities/dateToWeek";
 import { ICourse } from "./course.interface";
 import Course from "./course.model";
+import { IReview } from "../review/review.interface";
 
 export const coursePost = async (payload: ICourse): Promise<ICourse> => {
     payload.durationInWeeks = dateToWeek(payload.startDate, payload.endDate);
@@ -18,4 +20,106 @@ export const courseGet = async (query: IQueryBuilder): Promise<{ courses: ICours
     console.log({ query });
     const total = await Course.countDocuments(query.filter);
     return { courses, meta: { limit: query.meta.limit, page: query.meta.page, total } };
+};
+export const courseWithReviewGet = async (id: string): Promise<{ course: ICourse, reviews: IReview[]; }> => {
+    const result = await Course.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(id),
+            },
+        },
+        {
+            $facet: {
+                course: [
+                    {
+                        $project: {
+                            _id: 1,
+                            title: 1,
+                            instructor: 1,
+                            categoryId: 1,
+                            price: 1,
+                            tags: 1,
+                            startDate: 1,
+                            endDate: 1,
+                            language: 1,
+                            provider: 1,
+                            durationInWeeks: 1,
+                            details: 1,
+                        },
+                    },
+                ],
+                reviews: [
+                    {
+                        $lookup: {
+                            from: "reviews",
+                            localField: "_id",
+                            foreignField: "courseId",
+                            as: "reviews",
+                        },
+                    },
+                    {
+                        $unwind: "$reviews",
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            courseId: "$reviews.courseId",
+                            rating: "$reviews.rating",
+                            review: "$reviews.review",
+                        },
+                    },
+                ],
+            },
+        },
+    ]);
+
+
+    return { course: result[0].course[0], reviews: result[0].reviews };
+};
+export const courseBestGet = async (): Promise<{ course: ICourse; }> => {
+    const result = await Course.aggregate([
+        {
+            $lookup: {
+                from: 'reviews',
+                localField: '_id',
+                foreignField: 'courseId',
+                as: 'reviews',
+            },
+        },
+        {
+            $addFields: {
+                averageRating: {
+                    $round: [{ $avg: '$reviews.rating' }, 2],
+                },
+                reviewCount: { $size: '$reviews' },
+            },
+        },
+        {
+            $sort: { averageRating: -1 },
+        },
+        {
+            $project: {
+                _id: 1,
+                title: 1,
+                instructor: 1,
+                categoryId: 1,
+                price: 1,
+                tags: 1,
+                startDate: 1,
+                endDate: 1,
+                language: 1,
+                provider: 1,
+                durationInWeeks: 1,
+                details: 1,
+                averageRating: 1,
+                reviewCount: 1
+            },
+        },
+        {
+            $limit: 1,
+        },
+    ]);;
+
+
+    return { course: result[0] };
 };

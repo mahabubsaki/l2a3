@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import catchAsync from "../../shared/catchAsync";
 import { ICourse } from "./course.interface";
-import { courseGet, coursePost } from "./course.service";
+import { courseBestGet, courseGet, coursePost, courseWithReviewGet } from "./course.service";
 import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
 import pick from "../../utilities/pick";
 import queryBuilder from "../../utilities/queryBuilder";
 import { IQueryBuilder } from "../../interface/error";
+import { IReview } from "../review/review.interface";
 
 
 export const coursePostController = catchAsync(async (req: Request, res: Response) => {
@@ -32,5 +33,32 @@ export const courseGETController = catchAsync(async (req: Request, res: Response
         data: courses,
         meta: meta,
         message: "Courses retrieved successfully"
+    });
+});
+export const courseWithReviewGETController = catchAsync(async (req: Request, res: Response) => {
+
+    const id = req.params.courseId;
+
+    const result = await courseWithReviewGet(id);
+    sendResponse<{
+        course: ICourse;
+        reviews: IReview[];
+    }>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        data: result,
+        message: "Course and Reviews retrieved successfully"
+    });
+});
+export const courseBestGETController = catchAsync(async (_: Request, res: Response) => {
+
+
+
+    const result = await courseBestGet();
+    sendResponse<{ course: ICourse; }>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        data: result,
+        message: "Best course retrieved successfully"
     });
 });
