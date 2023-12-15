@@ -9,8 +9,7 @@ import queryBuilder from "../../utilities/queryBuilder";
 import { IQueryBuilder } from "../../interface/error";
 import { IReview } from "../review/review.interface";
 import mongoose from "mongoose";
-import Course from "./course.model";
-import AppError from "../../errors/AppError";
+
 
 
 export const coursePostController = catchAsync(async (req: Request, res: Response) => {
