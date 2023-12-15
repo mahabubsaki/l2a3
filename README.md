@@ -12,19 +12,19 @@ Before running the application, ensure you have the following installed in your 
 
 ### Installation
 
-1. Clone or download the repository from [https://github.com/mahabubsaki/l2a2.git].
+1. Clone or download the repository from [https://github.com/Porgramming-Hero-web-course/l2b2a3-course-review-mahabubsaki.git].
 
 `Clone a Repository:`
 This command clones a repository from GitHub to your local machine.
 
 ```bash
-   git clone https://github.com/mahabubsaki/l2a2.git
+   git clone https://github.com/Porgramming-Hero-web-course/l2b2a3-course-review-mahabubsaki.git
 ```
 
 2. Navigate to the project directory in your terminal.
 
 ```bash
-   cd l2a2
+   cd l2b2a3-course-review-mahabubsaki
 ```
 
 3. Install dependencies using npm (Node Package Manager).
@@ -91,34 +91,33 @@ If you encounter any issues while running the application, try the following ste
 #### My Server is Hosted on Vercel
 
 You can also access the API from the following link:
-[https://level2-assingment2.vercel.app/]
+[https://l2a3.vercel.app/]
 
 ##### API Documentation
 
 The API endpoints and their usages are documented below:
 
 `User Management:`
-`Create a new user`
-Endpoint: POST /api/users`
+`Create a new course`
+Endpoint: POST /api/course`
 
-`Retrieve a list of all users`
-Endpoint: GET /api/users
+`Retrieve a list of all course (you can add query like page,limit,sortBy,sortOrder,minPrice, maxPrice,tags,startDate, endDate,language,provider,durationInWeeks & level)`
+Endpoint: GET /api/courses
 
-`Retrieve a specific user by ID`
-Endpoint: GET /api/users/:userId
+`Create a new category`
+Endpoint: POST /api/categories
 
-`Update user information`
-Endpoint: PUT /api/users/:userId
+`Retrieve all categories`
+Endpoint: GET /api/categories
 
-`Delete a user`
-Endpoint: DELETE /api/users/:userId
+`Create a new review`
+Endpoint: POST /api/reviews
 
-`Order Management:`
-`Add New Product in Order`
-Endpoint: PUT /api/users/:userId/orders
+`Update course information`
+Endpoint: PUT /api/courses/:courseId
 
-`Retrieve all orders for a specific user`
-Endpoint: GET /api/users/:userId/orders
+`Retrieve course by ID with reviews`
+Endpoint: GET /api/courses/:courseId/reviews
 
-`Calculate Total Price of Orders for a Specific User`
-Endpoint: GET /api/users/:userId/orders/total-price
+`Retrieve the best course based on average review (rating)`
+Endpoint: GET /api/course/best
