@@ -1,6 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { UpdateQuery } from "mongoose";
 import { z } from "zod";
 import Category from "../category/category.model";
+import { ICourse } from "./course.interface";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
+import dateToWeek from "../../utilities/dateToWeek";
+
 
 const courseMongooseSchema = new mongoose.Schema({
     title: {
@@ -42,16 +47,20 @@ const courseMongooseSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    tags: [{
-        name: {
-            type: String,
-            required: true,
-        },
-        isDeleted: {
-            type: Boolean,
-            default: false,
-        },
-    }],
+    tags: [
+        {
+            _id: false,
+            name: {
+                type: String,
+                required: true,
+                _id: false
+            },
+            isDeleted: {
+                type: Boolean,
+                default: false,
+            },
+        }
+    ],
     startDate: {
         type: String,
         required: true,
@@ -85,6 +94,26 @@ const courseMongooseSchema = new mongoose.Schema({
     },
 });
 
+courseMongooseSchema.pre('findOneAndUpdate', async function (next) {
+    const query = this.getQuery();
+    const existing = await this.model.findOne(query);
+    if (!existing) {
+        throw new AppError(404, "No course found with the given id");
+    }
+    const update = this.getUpdate() as UpdateQuery<ICourse>;
+    const startDate = update.$set?.startDate || existing.startDate;
+    const endDate = update.$set?.endDate || existing.endDate;
+
+    if (new Date(startDate) > new Date(endDate)) {
+        throw new AppError(httpStatus.CONFLICT, 'StartDate cannot be greater than existing EndDate');
+    }
+    if (update.$set?.startDate || update.$set?.endDate) {
+        update.$set.durationInWeeks = dateToWeek(startDate, endDate);
+    }
+
+    next();
+});
+
 
 const courseZodSchema = z.object({
     title: z.string(),
@@ -105,9 +134,10 @@ const courseZodSchema = z.object({
     }).strict(),
 }).strict();
 
-
+const courseUpdateZodSchema = courseZodSchema.deepPartial().strict();
 
 export {
     courseMongooseSchema,
-    courseZodSchema
+    courseZodSchema,
+    courseUpdateZodSchema
 };

@@ -5,7 +5,7 @@ interface ITag {
     isDeleted: boolean;
 }
 
-interface ICourseDetails {
+export interface ICourseDetails {
     level: 'Beginner' | 'Intermediate' | 'Advanced';
     description: string;
 }

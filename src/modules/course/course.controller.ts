@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import catchAsync from "../../shared/catchAsync";
 import { ICourse } from "./course.interface";
-import { courseBestGet, courseGet, coursePost, courseWithReviewGet } from "./course.service";
+import { courseBestGet, courseGet, coursePost, courseUpdate, courseWithReviewGet } from "./course.service";
 import sendResponse from "../../shared/sendResponse";
 import httpStatus from "http-status";
 import pick from "../../utilities/pick";
@@ -9,6 +9,8 @@ import queryBuilder from "../../utilities/queryBuilder";
 import { IQueryBuilder } from "../../interface/error";
 import { IReview } from "../review/review.interface";
 import mongoose from "mongoose";
+import Course from "./course.model";
+import AppError from "../../errors/AppError";
 
 
 export const coursePostController = catchAsync(async (req: Request, res: Response) => {
@@ -40,9 +42,15 @@ export const courseWithReviewGETController = catchAsync(async (req: Request, res
 
     const id = req.params.courseId;
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        const err = new mongoose.Error.CastError('ObjectId', id, 'field_name');
+        const err = new mongoose.Error.CastError('ObjectId', id, 'invalid parameter');
         throw { errors: err, name: 'CastError' };
     }
+
+
+
+
+
+
 
     const result = await courseWithReviewGet(id);
     sendResponse<{
@@ -55,6 +63,9 @@ export const courseWithReviewGETController = catchAsync(async (req: Request, res
         message: "Course and Reviews retrieved successfully"
     });
 });
+
+
+
 export const courseBestGETController = catchAsync(async (_: Request, res: Response) => {
 
 
@@ -65,5 +76,28 @@ export const courseBestGETController = catchAsync(async (_: Request, res: Respon
         success: true,
         data: result,
         message: "Best course retrieved successfully"
+    });
+});
+
+
+
+export const coursePUTController = catchAsync(async (req: Request, res: Response) => {
+
+
+    const id = req.params.courseId;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        const err = new mongoose.Error.CastError('ObjectId', id, 'invalid parameter');
+        throw { errors: err, name: 'CastError' };
+    }
+
+
+
+    const body = req.body;
+    const result = await courseUpdate(id, body);
+    sendResponse<ICourse>(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        data: result,
+        message: "Course updated successfully"
     });
 });

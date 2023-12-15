@@ -1,10 +1,11 @@
 
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { IQueryBuilder } from "../../interface/error";
 import dateToWeek from "../../utilities/dateToWeek";
 import { ICourse } from "./course.interface";
 import Course from "./course.model";
 import { IReview } from "../review/review.interface";
+import retrieveNested from "../../utilities/retrieveNested";
 
 export const coursePost = async (payload: ICourse): Promise<ICourse> => {
     payload.durationInWeeks = dateToWeek(payload.startDate, payload.endDate);
@@ -17,7 +18,7 @@ export const courseGet = async (query: IQueryBuilder): Promise<{ courses: ICours
         skip: (query.meta.page - 1) * query.meta.limit,
         limit: query.meta.limit
     });
-    console.log({ query });
+
     const total = await Course.countDocuments(query.filter);
     return { courses, meta: { limit: query.meta.limit, page: query.meta.page, total } };
 };
@@ -122,4 +123,51 @@ export const courseBestGet = async (): Promise<{ course: ICourse; }> => {
 
 
     return { course: result[0] };
+};
+
+
+export const courseUpdate = async (id: string, payload: Partial<ICourse>): Promise<ICourse> => {
+    const { tags, ...rest } = payload;
+    const willDeleteTags = tags ? tags.filter(i => i.isDeleted === true).map(i => i.name) : [];
+    const willAddTags = tags ? tags.filter(i => i.isDeleted === false) : [];
+
+    let nested = {};
+    if (rest.details) {
+        nested = retrieveNested(rest.details, 'details');
+        delete rest.details;
+    }
+    const update = { ...nested, ...rest };
+
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        await Course.updateOne({ _id: new Types.ObjectId(id) }, {
+
+            $pull: { tags: { name: { $in: willDeleteTags } } },
+
+        }, { session });
+        const result = await Course.findByIdAndUpdate(id, {
+            $set: {
+                ...update
+            },
+            $addToSet: {
+                tags: {
+                    $each: willAddTags
+                },
+
+            },
+
+        }, { session, new: true });
+
+        await session.commitTransaction();
+        return result as ICourse;
+
+    } catch (err) {
+        await session.abortTransaction();
+        throw err;
+    } finally {
+        session.endSession();
+    }
+
 };

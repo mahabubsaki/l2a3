@@ -20,7 +20,8 @@ async function main() {
 
 main();
 
-process.on('unhandledRejection', () => {
+process.on('unhandledRejection', (err) => {
+    console.log(err);
     console.log(`😈 unahandledRejection is detected , shutting down ...`);
     if (server) {
         server.close(() => {
