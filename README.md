@@ -1,4 +1,4 @@
-# Simple CRUD Assignment
+# Course Review
 
 This application is a TypeScript-based CRUD (Create, Read, Update, Delete) application using Express, MongoDB, and Mongoose.
 
