@@ -97,7 +97,6 @@ You can also access the API from the following link:
 
 The API endpoints and their usages are documented below:
 
-`User Management:`
 `Create a new course`
 Endpoint: POST /api/course`
 
