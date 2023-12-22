@@ -12,19 +12,19 @@ Before running the application, ensure you have the following installed in your 
 
 ### Installation
 
-1. Clone or download the repository from [https://github.com/Porgramming-Hero-web-course/l2b2a3-course-review-mahabubsaki.git].
+1. Clone or download the repository from [https://github.com/mahabubsaki/l2a3.git].
 
 `Clone a Repository:`
 This command clones a repository from GitHub to your local machine.
 
 ```bash
-   git clone https://github.com/Porgramming-Hero-web-course/l2b2a3-course-review-mahabubsaki.git
+   git clone https://github.com/mahabubsaki/l2a3.git
 ```
 
 2. Navigate to the project directory in your terminal.
 
 ```bash
-   cd l2b2a3-course-review-mahabubsaki
+   cd l2a3
 ```
 
 3. Install dependencies using npm (Node Package Manager).
